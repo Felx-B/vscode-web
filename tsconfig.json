@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+		"noImplicitReturns": true,
+		"noUnusedLocals": true,
+		"allowUnreachableCode": false,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+            "vs/*": [
+                "./vscode/src/vs/*"
+            ]
+        },
+        "lib": [
+			"ES2015"
+		]
+    },
+    "include": ["workbench.ts"]
+}
