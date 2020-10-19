@@ -1,7 +1,7 @@
 
-vscodeVersion='1.49.0'
+vscodeVersion='1.50.1'
 
-# git clone https://github.com/microsoft/vscode.git
+git clone https://github.com/microsoft/vscode.git
 
 cd vscode
 git checkout -q $vscodeVersion
@@ -28,13 +28,14 @@ yarn gulp optimize-vscode
 yarn compile-web
 
 # Minify
-#yarn gulp minify-vscode
+# yarn gulp minify-vscode
 
 # Remove maps
 find out-vscode -type f -name '*.js.map' -delete
 
 # Extract compiled files
 rsync -av out-vscode ../dist
+mv ../dist/out-vscode ../dist/vscode
 rsync -av extensions ../dist --exclude 'extensions/**/node_modules'
 
 
