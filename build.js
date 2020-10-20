@@ -1,7 +1,8 @@
-var process = require("process")
-var child_process = require("child_process")
-var fs = require("fs")
-var glob = require("glob")
+const process = require("process")
+const child_process = require("child_process")
+const fs = require("fs")
+const fse = require("fs-extra");
+const glob = require("glob")
 
 const vscodeVersion = "1.50.1";
 
@@ -43,11 +44,10 @@ if(fs.existsSync('../dist')){
     fs.rmdirSync('../dist', { recursive: true })
 }
 fs.mkdirSync('../dist')
-fs.renameSync('out-vscode', '../dist/vscode');
+fse.copySync('out-vscode', '../dist/vscode');
 
 const extensionNM = glob.sync('extensions/**/node_modules', {});
 extensionNM.forEach(modules => {
     fs.rmdirSync(modules, {recursive: true});
 });
-console.log(extensionNM)
-fs.renameSync('extensions', '../dist/extensions');
+fse.copySync('extensions', '../dist/extensions');

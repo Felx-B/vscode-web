@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "build": "node build.js",
-    "prepare-demo": "todo",
-    "demo": "lite-server --baseDir='./demo'"
+    "prepare-demo": "node prepare-demo.js",
+    "demo": "http-server ./demo --cors"
   },
   "repository": {
     "type": "git",
@@ -18,14 +18,15 @@
   },
   "homepage": "https://github.com/Felx-B/vscode-web#readme",
   "devDependencies": {
+    "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "lite-server": "^2.5.4",
+    "ncp": "^2.0.0",
     "semver-umd": "^5.5.7",
     "vscode-oniguruma": "^1.4.0",
-    "vscode-textmate": "^5.2.0",
-    "ncp": "^2.0.0"
+    "vscode-textmate": "^5.2.0"
   },
   "dependencies": {
-   
+    "http-server": "^0.12.3"
   }
 }

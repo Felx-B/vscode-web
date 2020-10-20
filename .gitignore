@@ -106,3 +106,4 @@ dist
 vscode
 dist
 demo/lib
+demo/extensions.js

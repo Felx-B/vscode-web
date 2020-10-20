@@ -12,6 +12,7 @@
 
     <!-- Workbench Icon/Manifest/CSS -->
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <meta id="vscode-workbench-builtin-extensions" data-settings="[]" />
 
     <link
       data-name="vs/workbench/workbench.web.api"
@@ -20,11 +21,19 @@
     />
     <!-- Prefetch to avoid waterfall -->
     <link rel="prefetch" href="./lib/semver-umd/lib/semver-umd.js" />
+    <script src="extensions.js"></script>
   </head>
 
   <body aria-label=""></body>
 
   <script>
+    const extElement = document.getElementById(
+      "vscode-workbench-builtin-extensions"
+    );
+    extElement.attributes["data-settings"].value = JSON.stringify(
+      window.additionnalBuiltInExtensions
+    );
+
     let baseUri = `${window.location.origin}`;
     self.require = {
       baseUrl: `${baseUri}/dist/vscode/`,
