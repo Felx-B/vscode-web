@@ -1,0 +1,30 @@
+{
+  "name": "vscode-web",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "node build.js",
+    "prepare-demo": "node prepare-demo.js",
+    "demo": "http-server ./demo --cors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Felx-B/vscode-web.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Felx-B/vscode-web/issues"
+  },
+  "homepage": "https://github.com/Felx-B/vscode-web#readme",
+  "devDependencies": {
+    "fs-extra": "^9.0.1",
+    "glob": "^7.1.6",
+    "semver-umd": "^5.5.7",
+    "vscode-oniguruma": "^1.4.0",
+    "vscode-textmate": "^5.2.0",
+    "http-server": "^0.12.3"
+  },
+  "dependencies": {
+  }
+}
