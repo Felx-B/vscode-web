@@ -14,59 +14,57 @@ if (!fs.existsSync("vscode")) {
 }
 process.chdir("vscode");
 
-// child_process.execSync(`git checkout -q ${vscodeVersion}`, {
-//   stdio: "inherit",
-// });
-// if (!fs.existsSync("node_modules")) {
-//   child_process.execSync("yarn", { stdio: "inherit" });
-// }
-// // Use simple workbench
-// fs.copyFileSync(
-//   "../workbench.ts",
-//   "src/vs/code/browser/workbench/workbench.ts"
-// );
+child_process.execSync(`git checkout -q ${vscodeVersion}`, {
+  stdio: "inherit",
+});
+if (!fs.existsSync("node_modules")) {
+  child_process.execSync("yarn", { stdio: "inherit" });
+}
+// Use simple workbench
+fs.copyFileSync(
+  "../workbench.ts",
+  "src/vs/code/browser/workbench/workbench.ts"
+);
 
-// // Adapt compilation to web
-// const gulpfilePath = "./build/gulpfile.vscode.js";
-// let gulpfile = fs.readFileSync(gulpfilePath, { encoding: "utf8", flag: "r" });
+// Adapt compilation to web
+const gulpfilePath = "./build/gulpfile.vscode.js";
+let gulpfile = fs.readFileSync(gulpfilePath, { encoding: "utf8", flag: "r" });
 
-// gulpfile = gulpfile
-//   .replace(
-//     /vs\/workbench\/workbench.desktop.main/g,
-//     "vs/workbench/workbench.web.api"
-//   )
-//   .replace(
-//     /buildfile.workbenchDesktop/g,
-//     "buildfile.workbenchWeb,buildfile.keyboardMaps"
-//   );
+gulpfile = gulpfile
+  .replace(
+    /vs\/workbench\/workbench.desktop.main/g,
+    "vs/workbench/workbench.web.api"
+  )
+  .replace(
+    /buildfile.workbenchDesktop/g,
+    "buildfile.workbenchWeb,buildfile.keyboardMaps"
+  );
 
-// fs.writeFileSync(gulpfilePath, gulpfile);
+fs.writeFileSync(gulpfilePath, gulpfile);
 
-// // Compile
-// child_process.execSync("yarn gulp compile-build", { stdio: "inherit" });
-// child_process.execSync("yarn gulp optimize-vscode", { stdio: "inherit" });
-// child_process.execSync("yarn compile-web", { stdio: "inherit" });
+// Compile
+child_process.execSync("yarn gulp compile-build", { stdio: "inherit" });
+child_process.execSync("yarn gulp minify-vscode", { stdio: "inherit" });
+child_process.execSync("yarn compile-web", { stdio: "inherit" });
 
-// // TODO minify
+// Remove maps
+const mapFiles = glob.sync("out-vscode-min/**/*.js.map", {});
+mapFiles.forEach((mapFile) => {
+  fs.unlinkSync(mapFile);
+});
 
-// // Remove maps
-// const mapFiles = glob.sync("out-vscode/**/*.js.map", {});
-// mapFiles.forEach((mapFile) => {
-//   fs.unlinkSync(mapFile);
-// });
+// Extract compiled files
+if (fs.existsSync("../dist")) {
+  fs.rmdirSync("../dist", { recursive: true });
+}
+fs.mkdirSync("../dist");
+fse.copySync("out-vscode-min", "../dist/vscode");
 
-// // Extract compiled files
-// if (fs.existsSync("../dist")) {
-//   fs.rmdirSync("../dist", { recursive: true });
-// }
-// fs.mkdirSync("../dist");
-// fse.copySync("out-vscode", "../dist/vscode");
-
-// const extensionNM = glob.sync("extensions/**/node_modules", {});
-// extensionNM.forEach((modules) => {
-//   fs.rmdirSync(modules, { recursive: true });
-// });
-// fse.copySync("extensions", "../dist/extensions");
+const extensionNM = glob.sync("extensions/**/node_modules", {});
+extensionNM.forEach((modules) => {
+  fs.rmdirSync(modules, { recursive: true });
+});
+fse.copySync("extensions", "../dist/extensions");
 
 // Add built in extensions
 const extensions = [];
