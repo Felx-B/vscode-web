@@ -21,7 +21,11 @@
     />
     <!-- Prefetch to avoid waterfall -->
     <link rel="prefetch" href="./lib/semver-umd/lib/semver-umd.js" />
-    <script src="extensions.js"></script>
+    <!-- Built in extension -->
+    <script src="./dist/extensions.js"></script>
+
+    <!-- playground for demo -->
+    <script src="playground.js"></script>
   </head>
 
   <body aria-label=""></body>
@@ -30,9 +34,10 @@
     const extElement = document.getElementById(
       "vscode-workbench-builtin-extensions"
     );
-    extElement.attributes["data-settings"].value = JSON.stringify(
-      window.additionnalBuiltInExtensions
-    );
+    extElement.attributes["data-settings"].value = JSON.stringify([
+      ...playground,
+      ...extensions,
+    ]);
 
     let baseUri = `${window.location.origin}`;
     self.require = {

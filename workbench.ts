@@ -3,13 +3,6 @@ import { URI, UriComponents} from 'vs/base/common/uri';
 
 (async function () {
 	// create workbench
-
-	// TODO recup configuration async
-
-	/* TODO comment recupérer la liste des extensions + packageJSON + extensions ?
-	  compiler un fichier et le récupérer avant de lancer le create
-	  
-     */
 	const result = await fetch('product.json');
 	let config: IWorkbenchConstructionOptions & { folderUri?: UriComponents, workspaceUri?: UriComponents }  = await result.json();
 

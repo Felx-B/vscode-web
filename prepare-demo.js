@@ -25,15 +25,15 @@ child_process.execSync('yarn compile', {stdio: 'inherit'});
 
 process.chdir('../../../..');
 
-if (fs.existsSync("./demo/dist/extensions.js")) {
-  fs.unlinkSync("./demo/dist/extensions.js");
-}
+// if (fs.existsSync("./demo/dist/extensions.js")) {
+//   fs.unlinkSync("./demo/dist/extensions.js");
+// }
 
 const packageJSON = fs.readFileSync(
   "./demo/dist/extensions/vscode-web-playground/package.json"
 );
 const extensions = [{ packageJSON: JSON.parse(packageJSON), extensionPath:  "vscode-web-playground"}]
 
-const content = `window.additionnalBuiltInExtensions=${JSON.stringify(extensions)}`;
+const content = `var playground=${JSON.stringify(extensions)}`;
 
-fs.writeFileSync("./demo/extensions.js", content);
+fs.writeFileSync("./demo/playground.js", content);

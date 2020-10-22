@@ -1,53 +1,98 @@
-const process = require("process")
-const child_process = require("child_process")
-const fs = require("fs")
+const process = require("process");
+const child_process = require("child_process");
+const fs = require("fs");
 const fse = require("fs-extra");
-const glob = require("glob")
+const glob = require("glob");
+const json5 = require("json5");
 
 const vscodeVersion = "1.50.1";
 
-if(!fs.existsSync('vscode')){
-    child_process.execSync('git clone https://github.com/microsoft/vscode.git', {stdio: 'inherit'});
+if (!fs.existsSync("vscode")) {
+  child_process.execSync("git clone https://github.com/microsoft/vscode.git", {
+    stdio: "inherit",
+  });
 }
-process.chdir('vscode');
+process.chdir("vscode");
 
-child_process.execSync(`git checkout -q ${vscodeVersion}`, {stdio: 'inherit'});
-if(!fs.existsSync('node_modules')){
-    child_process.execSync('yarn', {stdio: 'inherit'});
+// child_process.execSync(`git checkout -q ${vscodeVersion}`, {
+//   stdio: "inherit",
+// });
+// if (!fs.existsSync("node_modules")) {
+//   child_process.execSync("yarn", { stdio: "inherit" });
+// }
+// // Use simple workbench
+// fs.copyFileSync(
+//   "../workbench.ts",
+//   "src/vs/code/browser/workbench/workbench.ts"
+// );
+
+// // Adapt compilation to web
+// const gulpfilePath = "./build/gulpfile.vscode.js";
+// let gulpfile = fs.readFileSync(gulpfilePath, { encoding: "utf8", flag: "r" });
+
+// gulpfile = gulpfile
+//   .replace(
+//     /vs\/workbench\/workbench.desktop.main/g,
+//     "vs/workbench/workbench.web.api"
+//   )
+//   .replace(
+//     /buildfile.workbenchDesktop/g,
+//     "buildfile.workbenchWeb,buildfile.keyboardMaps"
+//   );
+
+// fs.writeFileSync(gulpfilePath, gulpfile);
+
+// // Compile
+// child_process.execSync("yarn gulp compile-build", { stdio: "inherit" });
+// child_process.execSync("yarn gulp optimize-vscode", { stdio: "inherit" });
+// child_process.execSync("yarn compile-web", { stdio: "inherit" });
+
+// // TODO minify
+
+// // Remove maps
+// const mapFiles = glob.sync("out-vscode/**/*.js.map", {});
+// mapFiles.forEach((mapFile) => {
+//   fs.unlinkSync(mapFile);
+// });
+
+// // Extract compiled files
+// if (fs.existsSync("../dist")) {
+//   fs.rmdirSync("../dist", { recursive: true });
+// }
+// fs.mkdirSync("../dist");
+// fse.copySync("out-vscode", "../dist/vscode");
+
+// const extensionNM = glob.sync("extensions/**/node_modules", {});
+// extensionNM.forEach((modules) => {
+//   fs.rmdirSync(modules, { recursive: true });
+// });
+// fse.copySync("extensions", "../dist/extensions");
+
+// Add built in extensions
+const extensions = [];
+
+const extensionsFolderPath = "extensions";
+const extensionsContent = fs.readdirSync(extensionsFolderPath);
+for (const extension of extensionsContent) {
+  const extensionPath = `${extensionsFolderPath}/${extension}`;
+  if (fs.statSync(extensionPath).isDirectory()) {
+    const extensionPackagePath = `${extensionPath}/package.json`;
+
+    if (!fs.existsSync(extensionPackagePath)) {
+      continue;
+    }
+
+    const packageJSON = JSON.parse(fs.readFileSync(extensionPackagePath));
+    extensions.push({
+      packageJSON,
+      extensionPath: extension,
+    });
+  }
 }
-// Use simple workbench
-fs.copyFileSync('../workbench.ts', 'src/vs/code/browser/workbench/workbench.ts')
 
-// Adapt compilation to web
-const gulpfilePath = './build/gulpfile.vscode.js';
-let gulpfile = fs.readFileSync(gulpfilePath, {encoding:'utf8', flag:'r'});
+const extensionsVar =
+  "var extensions =" + JSON.stringify(extensions, { space: "\t", quote: "" });
 
-gulpfile = gulpfile
-    .replace(/vs\/workbench\/workbench.desktop.main/g, 'vs/workbench/workbench.web.api')
-    .replace(/buildfile.workbenchDesktop/g, 'buildfile.workbenchWeb,buildfile.keyboardMaps');
+fs.writeFileSync("../dist/extensions.js", extensionsVar);
 
-fs.writeFileSync(gulpfilePath, gulpfile);
 
-// Compile
-child_process.execSync('yarn gulp compile-build', {stdio: 'inherit'});
-child_process.execSync('yarn gulp optimize-vscode', {stdio: 'inherit'});
-child_process.execSync('yarn compile-web', {stdio: 'inherit'});
-
-// Remove maps
-const mapFiles = glob.sync('out-vscode/**/*.js.map', {});
-mapFiles.forEach(mapFile => {
-    fs.unlinkSync(mapFile);
-});
-
-// Extract compiled files
-if(fs.existsSync('../dist')){
-    fs.rmdirSync('../dist', { recursive: true })
-}
-fs.mkdirSync('../dist')
-fse.copySync('out-vscode', '../dist/vscode');
-
-const extensionNM = glob.sync('extensions/**/node_modules', {});
-extensionNM.forEach(modules => {
-    fs.rmdirSync(modules, {recursive: true});
-});
-fse.copySync('extensions', '../dist/extensions');
