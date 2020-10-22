@@ -3,7 +3,6 @@ const child_process = require("child_process");
 const fs = require("fs");
 const fse = require("fs-extra");
 const glob = require("glob");
-const json5 = require("json5");
 
 const vscodeVersion = "1.50.1";
 
