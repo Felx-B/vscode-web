@@ -8,7 +8,7 @@ Sample demo site can be found here :
 
 ## Build from source
 
-To build from sources, you need same prerequisites as vscode : 
+To build from source, you need same prerequisites as vscode : 
 [VSCode Prerequisites](https://github.com/microsoft/vscode/wiki/How-to-Contribute#prerequisites)
 
 Then simply run following commands
