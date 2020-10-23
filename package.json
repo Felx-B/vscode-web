@@ -1,7 +1,8 @@
 {
   "name": "vscode-web",
-  "version": "1.50.1",
+  "version": "1.50.1-test",
   "description": "",
+  "files": ["dist/*"],
   "scripts": {
     "build": "node build.js",
     "prepare-demo": "node prepare-demo.js",
