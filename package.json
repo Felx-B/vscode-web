@@ -1,6 +1,6 @@
 {
   "name": "vscode-web",
-  "version": "1.50.1-test",
+  "version": "1.50.1",
   "description": "",
   "files": ["dist/*"],
   "scripts": {
