@@ -17,7 +17,7 @@ steps:
 
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.x'
+    versionSpec: '2.x'
     addToPath: true
     architecture: 'x64'
 
@@ -28,6 +28,7 @@ steps:
   displayName: 'npm install and build'
   
 - task: Npm@1
+  displayName: 'Publish'
   inputs:
     command: 'publish'
     publishEndpoint: 'NPM'

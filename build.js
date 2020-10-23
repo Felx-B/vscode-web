@@ -3,6 +3,7 @@ const child_process = require("child_process");
 const fs = require("fs");
 const fse = require("fs-extra");
 const glob = require("glob");
+const rmdir = require('rimraf');
 
 const vscodeVersion = "1.50.1";
 
@@ -61,7 +62,7 @@ fse.copySync("out-vscode-min", "../dist/vscode");
 
 const extensionNM = glob.sync("extensions/**/node_modules", {});
 extensionNM.forEach((modules) => {
-  fs.rmdirSync(modules, { recursive: true });
+  rmdir.sync(modules, { recursive: true });
 });
 fse.copySync("extensions", "../dist/extensions");
 
