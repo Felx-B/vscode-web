@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm build
+      - run: npm run build
 
   publish-npm:
     needs: build
