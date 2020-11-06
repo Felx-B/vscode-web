@@ -32,17 +32,3 @@ steps:
   inputs:
     command: 'publish'
     publishEndpoint: 'NPM'
-
-# - task: GitHubRelease@1
-#   inputs:
-#     gitHubConnection: 'Github'
-#     repositoryName: '$(Build.Repository.Name)'
-#     action: 'create'
-#     target: '$(Build.SourceVersion)'
-#     tagSource: 'gitTag'
-#     tagPattern: '$(Build.SourceVersion)'
-#     title: '$(Build.SourceVersion)'
-#     releaseNotesSource: 'inline'
-#     assets: 'dist/*'
-#     isDraft: true
-#     addChangeLog: false
