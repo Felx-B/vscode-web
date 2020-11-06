@@ -1,0 +1,17 @@
+{
+  "name": "web-editor",
+  "version": "1.0.0",
+  "description": "VSCode web sample without FileSystemProvider",
+  "scripts": {
+    "sample": "http-server ."
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^0.12.3",
+    "vscode-web": "^1.51.0",
+    "semver-umd": "^5.5.7",
+    "vscode-oniguruma": "^1.4.0",
+    "vscode-textmate": "^5.2.0"
+  }
+}
