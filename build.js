@@ -5,7 +5,7 @@ const fse = require("fs-extra");
 const glob = require("glob");
 const rmdir = require('rimraf');
 
-const vscodeVersion = "1.51.0";
+const vscodeVersion = "1.51.1";
 
 if (!fs.existsSync("vscode")) {
   child_process.execSync("git clone https://github.com/microsoft/vscode.git", {

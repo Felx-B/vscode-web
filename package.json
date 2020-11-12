@@ -1,7 +1,7 @@
 {
   "name": "vscode-web",
-  "version": "1.51.0",
-  "description": "",
+  "version": "1.51.1",
+  "description": "Visual Studio Code for browser",
   "files": ["dist/*"],
   "scripts": {
     "build": "node build.js",
@@ -12,8 +12,8 @@
     "type": "git",
     "url": "git+https://github.com/Felx-B/vscode-web.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Felix B",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Felx-B/vscode-web/issues"
   },
