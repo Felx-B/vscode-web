@@ -1,10 +1,17 @@
 import { create, IWorkbenchConstructionOptions, IWorkspaceProvider } from 'vs/workbench/workbench.web.api';
 import { URI, UriComponents} from 'vs/base/common/uri';
+declare const window: any;
 
 (async function () {
 	// create workbench
-	const result = await fetch('product.json');
-	let config: IWorkbenchConstructionOptions & { folderUri?: UriComponents, workspaceUri?: UriComponents }  = await result.json();
+	let config: IWorkbenchConstructionOptions & { folderUri?: UriComponents, workspaceUri?: UriComponents }  = {};
+
+	if(window.product){
+		config = window.product;
+	}else{
+		const result = await fetch('/product.json');
+		config = await result.json();
+	}
 
 
 	if (Array.isArray(config.staticExtensions)) {
