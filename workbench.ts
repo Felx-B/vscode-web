@@ -30,7 +30,7 @@ declare const window: any;
 	}
 
 	if(workspace){
-		const workspaceProvider: IWorkspaceProvider = { workspace, open: async () => {} }
+		const workspaceProvider: IWorkspaceProvider = { workspace, open: async () => {}, trusted: true }
 		config = { ...config, workspaceProvider };
 	}
 
