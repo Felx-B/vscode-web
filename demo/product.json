@@ -4,10 +4,22 @@
 		"nameLong": "Code Web",
 		"applicationName": "code-web",
 		"dataFolderName": ".vscode-web",
-		"version": "1.2.3"
+		"version": "1.2.3",
+		"extensionEnabledApiProposals": {
+			"vscode.vscode-web-playground": [
+				"fileSearchProvider",
+				"textSearchProvider"
+			]
+		}
 	},
 	"folderUri": {
 		"scheme": "memfs",
 		"path": "/sample-folder"
-	}
+	},
+	"additionalBuiltinExtensions": [
+		{
+			"scheme": "http",
+			"path": "/static/extensions/vscode-web-playground"
+		}
+	]
 }

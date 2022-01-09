@@ -1,7 +1,10 @@
 # VSCode Web
 This project is aimed to build a web version of VSCode, this is not a fork, simply a web compilation of the VSCode project.
 
-A similar compilation is used to generate [VSCode Web test playground](https://vscode-web-test-playground.azurewebsites.net/).
+A similar compilation is used to generate [VSCode Web](https://vscode.dev).
+## Update
+Microsoft recently open sourced VSCode web compilation, so I simplified the build process to use the official compilation (no more tweak needed).
+Some modification have been made in the `index.html` file.
 
 ## Use case
 This project can be used to build a strong web file editor/reader. You need to implement your own [`FileSystemProvider`](https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider) through extension. 

@@ -104,6 +104,10 @@ dist
 .tern-port
 
 vscode
+vscode-web
 dist
-demo/lib
+demo/static
+demo/code-*
+demo/favicon.ico
+demo/manifest.json
 demo/playground.js
