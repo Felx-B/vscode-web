@@ -1,6 +1,6 @@
 {
   "name": "vscode-web",
-  "version": "1.63.2",
+  "version": "1.64.0",
   "description": "Visual Studio Code for browser",
   "files": ["dist/*"],
   "scripts": {
