@@ -9,6 +9,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "vscode-web": "^1.63.2"
+    "vscode-web": "^1.65.0"
   }
 }
