@@ -4,7 +4,7 @@
 		"nameLong": "Code Web",
 		"applicationName": "code-web",
 		"dataFolderName": ".vscode-web",
-		"version": "1.2.3",
+		"version": "1.66.0",
 		"extensionEnabledApiProposals": {
 			"vscode.vscode-web-playground": [
 				"fileSearchProvider",
