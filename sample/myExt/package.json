@@ -1,0 +1,54 @@
+{
+  "name": "vscode-web-playground",
+  "description": "Web playground for VS Code",
+  "version": "0.0.13",
+  "publisher": "vscode",
+  "license": "MIT",
+  "enabledApiProposals": ["fileSearchProvider", "textSearchProvider"],
+  "private": true,
+  "activationEvents": ["onFileSystem:memfs", "onDebug"],
+  "browser": "./dist/extension",
+  "engines": {
+    "vscode": "^1.48.0"
+  },
+  "contributes": {
+    "viewsWelcome": [
+      {
+        "view": "debug",
+        "contents": "In order to run and debug you'll need to create a local workspace."
+      },
+      {
+        "view": "terminal",
+        "contents": "In order to run and debug you'll need to create a local workspace."
+      }
+    ],
+    "taskDefinitions": [
+      {
+        "type": "custombuildscript",
+        "required": ["flavor"],
+        "properties": {
+          "flavor": {
+            "type": "string",
+            "description": "The build flavor. Should be either '32' or '64'."
+          },
+          "flags": {
+            "type": "array",
+            "description": "Additional build flags."
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "yarn webpack-cli --config extension.webpack.config --mode production",
+    "watch": "yarn webpack-cli --config extension.webpack.config --mode production --watch --info-verbosity verbose",
+    "prepublish": "yarn webpack-cli --config extension.webpack.config --mode production"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.48.0",
+    "ts-loader": "^4.4.2",
+    "typescript": "^3.9.7",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  }
+}
