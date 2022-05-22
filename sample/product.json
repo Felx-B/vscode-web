@@ -4,6 +4,18 @@
 		"nameLong": "VSCode Web without FileSystemProvider",
 		"applicationName": "code-web-sample",
 		"dataFolderName": ".vscode-web-sample",
-		"version": "1.2.3"
-	}
+		"version": "1.2.3",
+"extensionEnabledApiProposals": {
+      "vscode.vscode-web-playground": [
+        "fileSearchProvider",
+        "textSearchProvider"
+      ]
+    }
+	},
+"additionalBuiltinExtensions": [
+    {
+      "scheme": "https",
+      "path": "myext"
+    }
+  ]
 }
