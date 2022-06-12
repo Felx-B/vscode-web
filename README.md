@@ -5,7 +5,7 @@ Here is a StackBlitz sample
 https://stackblitz.com/edit/vscode-web
 
 
-A similar compilation is used to generate [VSCode Web](https://vscode.dev).
+A similar compilation is used to generate [VSCode Web](https://vscode.dev) and [Github Dev](https://github.dev)
 ## Update
 Microsoft recently open sourced VSCode web compilation, so I simplified the build process to use the official compilation (no more tweak needed).
 Some modification have been made in the `index.html` file.
@@ -13,8 +13,6 @@ Some modification have been made in the `index.html` file.
 ## Use case
 This project can be used to build a strong web file editor/reader. You need to implement your own [`FileSystemProvider`](https://code.visualstudio.com/api/references/vscode-api#FileSystemProvider) through extension. 
 Additional you can also use [proposed API](https://code.visualstudio.com/api/advanced-topics/using-proposed-api) to implement a `TextSearchProvider` and `FileSearchProvider`.
-
-Sample from official VSCode website consuming Github FileSystemProvider: [Demo](https://vscode-web-test-playground.azurewebsites.net/?enter=true&gh=microsoft/vscode) (requires Github access)
 
 ## Sample project
 This project is aimed to be used through npm package to avoid consumer to recompile whole solution.
@@ -27,6 +25,12 @@ cd ./sample
 yarn
 yarn sample
 ```
+
+## Extension Gallery
+Based on VS MarketPlace rules, you are not allowed to consume VSCode Marketplace from your own VSCode Web
+But [Open VSX Registry](https://open-vsx.org/) is here to provide an alternate marketplace.
+
+See the [product.json](sample/product.json) file in `sample` folder to configure it.
 
 
 ## Build from source
