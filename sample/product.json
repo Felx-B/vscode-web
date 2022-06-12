@@ -1,9 +1,32 @@
 {
 	"productConfiguration": {
-		"nameShort": "VSCode Web Sample",
-		"nameLong": "VSCode Web without FileSystemProvider",
-		"applicationName": "code-web-sample",
-		"dataFolderName": ".vscode-web-sample",
-		"version": "1.2.3"
-	}
-}
+	  "nameShort": "VSCode Web Sample",
+	  "nameLong": "VSCode Web without FileSystemProvider",
+	  "applicationName": "code-web-sample",
+	  "dataFolderName": ".vscode-web-sample",
+	  "version": "1.66.0",
+	  "extensionsGallery": {
+		"serviceUrl": "https://open-vsx.org/vscode/gallery",
+		"itemUrl": "https://open-vsx.org/vscode/item",
+		"resourceUrlTemplate":
+		  "https://openvsxorg.blob.core.windows.net/resources/{publisher}/{name}/{version}/{path}"
+	  },
+	  "extensionEnabledApiProposals": {
+		"vscode.vscode-web-playground": [
+		  "fileSearchProvider",
+		  "textSearchProvider"
+		]
+	  }
+	},
+	"folderUri": {
+	  "scheme": "memfs",
+	  "path": "/sample-folder"
+	},
+	"additionalBuiltinExtensions": [
+	  {
+		"scheme": "http",
+		"path": "/myExt"
+	  }
+	]
+  }
+  
