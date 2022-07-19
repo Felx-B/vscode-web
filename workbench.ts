@@ -12,6 +12,7 @@ declare const window: any;
   let config: IWorkbenchConstructionOptions & {
     folderUri?: UriComponents;
     workspaceUri?: UriComponents;
+    domElementId?: string;
   } = {};
 
   if (window.product) {
@@ -50,5 +51,9 @@ declare const window: any;
     config = { ...config, workspaceProvider };
   }
 
-  create(document.body, config);
+  const domElement = !!config.domElementId
+    && document.getElementById(config.domElementId)
+    || document.body;
+
+  create(domElement, config);
 })();
