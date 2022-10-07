@@ -1,10 +1,9 @@
 import {
-  create,
-  IWorkbenchConstructionOptions,
-  IWorkspaceProvider,
-  IWorkspace,
+  create
 } from "vs/workbench/workbench.web.main";
 import { URI, UriComponents } from "vs/base/common/uri";
+import { IWorkbenchConstructionOptions } from "vs/workbench/browser/web.api";
+import { IWorkspace, IWorkspaceProvider } from "vs/workbench/services/host/browser/browserHostService";
 declare const window: any;
 
 (async function () {
