@@ -1,10 +1,10 @@
 {
 	"productConfiguration": {
 	  "nameShort": "VSCode Web Sample",
-	  "nameLong": "VSCode Web without FileSystemProvider",
+	  "nameLong": "VSCode Web sample",
 	  "applicationName": "code-web-sample",
 	  "dataFolderName": ".vscode-web-sample",
-	  "version": "1.66.0",
+	  "version": "1.75.0",
 	  "extensionsGallery": {
 		"serviceUrl": "https://open-vsx.org/vscode/gallery",
 		"itemUrl": "https://open-vsx.org/vscode/item",

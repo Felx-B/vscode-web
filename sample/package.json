@@ -1,7 +1,7 @@
 {
   "name": "web-editor",
   "version": "1.0.0",
-  "description": "VSCode web sample without FileSystemProvider",
+  "description": "VSCode web sample",
   "scripts": {
     "sample": "node ./http.js"
   },
@@ -9,6 +9,6 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
-    "vscode-web": "^1.69.0"
+    "vscode-web": "^1.75.0"
   }
 }
