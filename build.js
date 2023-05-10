@@ -3,7 +3,7 @@ const child_process = require("child_process");
 const fs = require("fs");
 const fse = require("fs-extra");
 
-const vscodeVersion = "1.77.1";
+const vscodeVersion = "1.78.1";
 
 if (!fs.existsSync("vscode")) {
   child_process.execSync(`git clone --depth 1 https://github.com/microsoft/vscode.git -b ${vscodeVersion}`, {
