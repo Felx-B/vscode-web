@@ -1,26 +1,23 @@
 {
-  "name": "vscode-web",
-  "version": "1.78.1",
+  "name": "@zorse/vscode-web",
+  "version": "1.78.2-patch.1",
   "description": "Visual Studio Code for browser",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "node build.js",
-    "prepare-demo": "node prepare-demo.js",
-    "demo": "node ./demo/http.js"
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Felx-B/vscode-web.git"
+    "url": "git+https://github.com/zorse-lang/vscode-web.git"
   },
-  "author": "Felix B",
+  "author": "Felix B, Sepehr Laal",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Felx-B/vscode-web/issues"
+    "url": "https://github.com/zorse-lang/vscode-web/issues"
   },
-  "homepage": "https://github.com/Felx-B/vscode-web#readme",
-  "devDependencies": {
-    "express": "^4.17.1",
-    "fs-extra": "^9.0.1"
-  },
+  "homepage": "https://github.com/zorse-lang/vscode-web#readme",
+  "devDependencies": {},
   "dependencies": {}
 }
