@@ -46,7 +46,7 @@ fs.cpSync("../vscode-web", "../dist", { recursive: true, force: true });
 // Patch output
 const distWorkbenchPath = "../dist/out/vs/workbench/workbench.web.main.js";
 const workbench = fs.readFileSync(distWorkbenchPath, "utf8");
-const workbenchPatched = workbench.replace(/("https:\/\/{{uuid}}[^"]+")/g, "(globalThis.PUBLIC_URL||$1)");
+const workbenchPatched = workbench.replace(/("https:\/\/{{uuid}}[^"]+")/g, "(globalThis.VSCODE_WEB_PUBLIC_URL||$1)");
 fs.writeFileSync(distWorkbenchPath, workbenchPatched, "utf8");
 
 const stripSourceMapComments = async (destPath) => {

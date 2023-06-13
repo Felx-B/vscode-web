@@ -12,14 +12,14 @@ This fork changes vscode-web as follows:
 - Removes all sourcemap and other metadata for performance / hosting.
 - Minor changes here and there to support various Zorse features.
 
-This fork takes in a configuration parameter `window.PUBLIC_URL`. If this is set
+This fork takes in a configuration parameter `window.VSCODE_WEB_PUBLIC_URL`. If this is set
 it is used instead of `vscode-cdn.net` for all iframe and web worker requests.
 
-The recommended value for `window.PUBLIC_URL` is:
+The recommended value for `window.VSCODE_WEB_PUBLIC_URL` is:
 
 ```js
-`${window.location.protocol}//{{uuid}}.${window.location.host}${window.location.pathname}`;
-// example: http://{{uuid}}.localhost/...
+`${window.location.protocol}//{{uuid}}.${window.location.host}${window.location.pathname}/...`;
+// example: http://{{uuid}}.localhost/.../out/vs/workbench/contrib/webview/browser/pre/
 ```
 
 If everything is loaded from `example.com`, then `{{uuid}}.example.com/*` needs
