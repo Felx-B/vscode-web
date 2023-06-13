@@ -31,3 +31,97 @@ index 5fc7d5d..729ed0b 100644
  				}
  			});
  		}
+diff --git a/src/vs/workbench/api/worker/extensionHostWorker.ts b/src/vs/workbench/api/worker/extensionHostWorker.ts
+index 998b53a..33d7480 100644
+--- a/src/vs/workbench/api/worker/extensionHostWorker.ts
++++ b/src/vs/workbench/api/worker/extensionHostWorker.ts
+@@ -41,7 +41,6 @@ const nativeClose = self.close.bind(self);
+ self.close = () => console.trace(`'close' has been blocked`);
+ 
+ const nativePostMessage = postMessage.bind(self);
+-self.postMessage = () => console.trace(`'postMessage' has been blocked`);
+ 
+ function shouldTransformUri(uri: string): boolean {
+ 	// In principle, we could convert any URI, but we have concerns
+@@ -77,9 +76,6 @@ function patchFetching(asBrowserUri: (uri: URI) => Promise<URI>) {
+ 
+ self.importScripts = () => { throw new Error(`'importScripts' has been blocked`); };
+ 
+-// const nativeAddEventListener = addEventListener.bind(self);
+-self.addEventListener = () => console.trace(`'addEventListener' has been blocked`);
+-
+ (<any>self)['AMDLoader'] = undefined;
+ (<any>self)['NLSLoaderPlugin'] = undefined;
+ (<any>self)['define'] = undefined;
+diff --git a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
+index 576bad1..d348059 100644
+--- a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
++++ b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
+@@ -1,12 +1,5 @@
+ <!DOCTYPE html>
+ <html>
+-	<head>
+-		<meta http-equiv="Content-Security-Policy" content="
+-			default-src 'none';
+-			child-src 'self' data: blob:;
+-			script-src 'self' 'unsafe-eval' 'sha256-/r7rqQ+yrxt57sxLuQ6AMYcy/lUpvAIzHjIJt/OeLWU=' https:;
+-			connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*;"/>
+-	</head>
+ 	<body>
+ 	<script>
+ (function() {
+@@ -17,11 +10,23 @@
+ 	const salt = searchParams.get('salt');
+ 
+ 	(async function() {
++		const memory = await new Promise((resolve, reject) => {
++			const timer = setTimeout(() => {
++				reject(new Error('timed out.'));
++			}, 500);
++			window.addEventListener('message', function(event) {
++				if (event.data instanceof WebAssembly.Memory) {
++					clearTimeout(timer);
++					window.removeEventListener('message', this);
++					resolve(event.data);
++				}
++			});
++		});
+ 		const hostnameValidationMarker = 'v--';
+ 		const hostname = location.hostname;
+ 		if (!hostname.startsWith(hostnameValidationMarker)) {
+ 			// validation not requested
+-			return start();
++			return start(memory);
+ 		}
+ 		if (!crypto.subtle) {
+ 			// cannot validate, not running in a secure context
+@@ -47,7 +52,7 @@
+ 		const requiredSubdomain = `${hostnameValidationMarker}${parentOriginHash}.`;
+ 		if (hostname.substring(0, requiredSubdomain.length) === requiredSubdomain) {
+ 			// validation succeeded!
+-			return start();
++			return start(memory);
+ 		}
+ 
+ 		return sendError(new Error(`Expected '${requiredSubdomain}' as subdomain!`));
+@@ -64,7 +69,7 @@
+ 		}, '*');
+ 	}
+ 
+-	function start() {
++	function start(memory) {
+ 		try {
+ 			let workerUrl = '../../../../base/worker/workerMain.js';
+ 			if(globalThis.crossOriginIsolated) {
+@@ -78,7 +83,10 @@
+ 			worker.onmessage = (event) => {
+ 				const { data } = event;
+ 
+-				if (data?.type === '_newWorker') {
++				if (data?.type === '_memory') {
++					worker.postMessage(memory);
++					return;
++				} if (data?.type === '_newWorker') {
+ 					const { id, port, url, options } = data;
+ 					const newWorker = new Worker(url, options);
+ 					newWorker.postMessage(port, [port]);
