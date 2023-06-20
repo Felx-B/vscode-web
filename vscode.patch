@@ -54,7 +54,7 @@ index 998b53a..33d7480 100644
  (<any>self)['NLSLoaderPlugin'] = undefined;
  (<any>self)['define'] = undefined;
 diff --git a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
-index 576bad1..d348059 100644
+index 576bad1..0f29ae7 100644
 --- a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 +++ b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 @@ -1,12 +1,5 @@
@@ -70,22 +70,23 @@ index 576bad1..d348059 100644
  	<body>
  	<script>
  (function() {
-@@ -17,11 +10,23 @@
+@@ -17,11 +10,24 @@
  	const salt = searchParams.get('salt');
  
  	(async function() {
++		const memoryReceiveTimeout = 500; // ms
 +		const memory = await new Promise((resolve, reject) => {
 +			const timer = setTimeout(() => {
 +				reject(new Error('timed out.'));
-+			}, 500);
-+			window.addEventListener('message', function(event) {
++			}, memoryReceiveTimeout);
++			window.addEventListener('message', function listener(event) {
 +				if (event.data instanceof WebAssembly.Memory) {
 +					clearTimeout(timer);
-+					window.removeEventListener('message', this);
++					window.removeEventListener('message', listener);
 +					resolve(event.data);
 +				}
 +			});
-+		});
++		}).catch(() => { /* no memory, ignore */ })
  		const hostnameValidationMarker = 'v--';
  		const hostname = location.hostname;
  		if (!hostname.startsWith(hostnameValidationMarker)) {
@@ -95,7 +96,7 @@ index 576bad1..d348059 100644
  		}
  		if (!crypto.subtle) {
  			// cannot validate, not running in a secure context
-@@ -47,7 +52,7 @@
+@@ -47,7 +53,7 @@
  		const requiredSubdomain = `${hostnameValidationMarker}${parentOriginHash}.`;
  		if (hostname.substring(0, requiredSubdomain.length) === requiredSubdomain) {
  			// validation succeeded!
@@ -104,7 +105,7 @@ index 576bad1..d348059 100644
  		}
  
  		return sendError(new Error(`Expected '${requiredSubdomain}' as subdomain!`));
-@@ -64,7 +69,7 @@
+@@ -64,7 +70,7 @@
  		}, '*');
  	}
  
@@ -113,7 +114,7 @@ index 576bad1..d348059 100644
  		try {
  			let workerUrl = '../../../../base/worker/workerMain.js';
  			if(globalThis.crossOriginIsolated) {
-@@ -78,7 +83,10 @@
+@@ -78,7 +84,10 @@
  			worker.onmessage = (event) => {
  				const { data } = event;
  
