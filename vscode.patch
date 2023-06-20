@@ -53,6 +53,44 @@ index 998b53a..33d7480 100644
  (<any>self)['AMDLoader'] = undefined;
  (<any>self)['NLSLoaderPlugin'] = undefined;
  (<any>self)['define'] = undefined;
+diff --git a/src/vs/workbench/contrib/webview/browser/pre/index.html b/src/vs/workbench/contrib/webview/browser/pre/index.html
+index 8e3d08e..1185d47 100644
+--- a/src/vs/workbench/contrib/webview/browser/pre/index.html
++++ b/src/vs/workbench/contrib/webview/browser/pre/index.html
+@@ -4,9 +4,6 @@
+ <head>
+ 	<meta charset="UTF-8">
+ 
+-	<meta http-equiv="Content-Security-Policy"
+-		content="default-src 'none'; script-src 'sha256-N4YFn5ze5crjPqMK/opogKs7bSGWtf3lmjV/3LfbSOs=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
+-
+ 	<!-- Disable pinch zooming -->
+ 	<meta name="viewport"
+ 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+@@ -205,9 +202,6 @@
+ 							});
+ 						};
+ 					})();
+-					delete window.parent;
+-					delete window.top;
+-					delete window.frameElement;
+ 				`;
+ 		}
+ 
+@@ -355,12 +349,7 @@
+ 					throw err instanceof Error ? err : new Error(String(err));
+ 				}
+ 
+-				if (hostname === parentOriginHash || hostname.startsWith(parentOriginHash + '.')) {
+-					// validation succeeded!
+-					return start(parentOrigin);
+-				}
+-
+-				throw new Error(`Expected '${parentOriginHash}' as hostname or subdomain!`);
++				return start(parentOrigin);
+ 			}
+ 		}();
+ 
 diff --git a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 index 576bad1..0f29ae7 100644
 --- a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
