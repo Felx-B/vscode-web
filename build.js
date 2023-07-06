@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const assert = require("assert");
 const child_process = require("child_process");
 const { version } = require("./package.json");
 
@@ -49,18 +50,38 @@ const workbench = fs.readFileSync(distWorkbenchPath, "utf8");
 const workbenchPatched = workbench.replace(/("https:\/\/{{uuid}}[^"]+")/g, "(globalThis.VSCODE_WEB_PUBLIC_URL||$1)");
 fs.writeFileSync(distWorkbenchPath, workbenchPatched, "utf8");
 
-const stripSourceMapComments = async (destPath) => {
+// Strip sourcemaps and patch vscode-uri for "://" URIs
+const re = /.=function\(\)\{function .\((.),.,(.),.,(.),.\)\{/g;
+const patchOutput = async (destPath) => {
+  let hasPatched = false;
+  let hasStripped = false;
   const stat = await fs.promises.stat(destPath);
   if (stat.isDirectory()) {
     for (const child of await fs.promises.readdir(destPath)) {
-      await stripSourceMapComments(path.join(destPath, child));
+      hasStripped |= await patchOutput(path.join(destPath, child));
     }
   }
   if (stat.isFile() && destPath.endsWith(".js")) {
     const content = await fs.promises.readFile(destPath, "utf8");
     const stripped = content.replace(/^\/\/# sourceMappingURL=[^\r\n]*/gm, "");
-    await fs.promises.writeFile(destPath, stripped, "utf8");
+    if (stripped !== content) {
+      console.log(`Stripped sourcemaps from ${destPath}`);
+      await fs.promises.writeFile(destPath, stripped, "utf8");
+      hasStripped = true;
+    }
+    const matches = re.exec(stripped);
+    if (matches && matches.length === 4) {
+      const [_, e, n, t] = matches;
+      const patched = stripped.replace(
+        re,
+        `${_}if(${n}&&${n}.startsWith("://")){try{let o=globalThis.origin.split("://");${e}=o[0];${t}=o[1];${n}=${n}.replace("://","/")}catch(_){}};`
+      );
+      console.log(`Patched ${destPath} for vscode-uri`);
+      await fs.promises.writeFile(destPath, patched, "utf8");
+      hasPatched = true;
+    }
   }
+  return hasStripped && hasPatched;
 };
 
-stripSourceMapComments(path.join(__dirname, "dist"));
+assert(patchOutput(path.join(__dirname, "dist")), "Failed to patch output.");
