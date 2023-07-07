@@ -19,6 +19,7 @@ if (!fs.existsSync("vscode")) {
   child_process.execSync(`git clone --depth 1 https://github.com/microsoft/vscode.git -b ${VSCODE_VERSION}`, {
     stdio: "inherit",
   });
+  child_process.execSync("cd vscode && git apply ../vscode.patch", { stdio: "inherit" });
 }
 
 process.chdir("vscode");
@@ -26,9 +27,6 @@ process.chdir("vscode");
 if (!fs.existsSync("node_modules")) {
   child_process.execSync("yarn", { stdio: "inherit" });
 }
-
-// Patch source
-child_process.execSync("git apply ../vscode.patch", { stdio: "inherit" });
 
 // Use simple workbench
 fs.copyFileSync("../workbench.ts", "src/vs/code/browser/workbench/workbench.ts");
@@ -38,7 +36,7 @@ child_process.execSync("yarn gulp vscode-web-min", { stdio: "inherit" });
 
 // Extract compiled files
 if (fs.existsSync("../dist")) {
-  fs.rmdirSync("../dist", { recursive: true });
+  fs.rmSync("../dist", { recursive: true, force: true });
 }
 
 fs.mkdirSync("../dist");
@@ -69,16 +67,18 @@ const patchOutput = async (destPath) => {
       await fs.promises.writeFile(destPath, stripped, "utf8");
       hasStripped = true;
     }
-    const matches = re.exec(stripped);
-    if (matches && matches.length === 4) {
-      const [_, e, n, t] = matches;
-      const patched = stripped.replace(
-        re,
-        `${_}if(${n}&&${n}.startsWith("://")){try{let o=globalThis.origin.split("://");${e}=o[0];${t}=o[1];${n}=${n}.replace("://","/")}catch(_){}};`
-      );
-      console.log(`Patched ${destPath} for vscode-uri`);
-      await fs.promises.writeFile(destPath, patched, "utf8");
-      hasPatched = true;
+    if (destPath.includes("jsonServer")) {
+      const matches = re.exec(stripped);
+      if (matches && matches.length === 4) {
+        const [_, e, n, t] = matches;
+        const patched = stripped.replace(
+          re,
+          `${_}if(${n}&&${n}.startsWith("://")){try{let o=globalThis.origin.split("://");${e}=o[0];${t}=o[1];${n}=${n}.replace("://","/")}catch(_){}};`
+        );
+        console.log(`Patched ${destPath} for vscode-uri`);
+        await fs.promises.writeFile(destPath, patched, "utf8");
+        hasPatched = true;
+      }
     }
   }
   return hasStripped && hasPatched;
