@@ -13,7 +13,4 @@ fse.copySync("./dist/out", "./demo/static/out");
 const webPlaygroundPath = './demo/static/extensions/vscode-web-playground';
 
 child_process.execSync(`git clone https://github.com/microsoft/vscode-web-playground.git  ${webPlaygroundPath}`, {stdio: 'inherit'});
-process.chdir(webPlaygroundPath);
-child_process.execSync('yarn', {stdio: 'inherit'});
-child_process.execSync('yarn compile', {stdio: 'inherit'});
 
