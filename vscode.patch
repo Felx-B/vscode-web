@@ -54,7 +54,7 @@ index 998b53a..33d7480 100644
  (<any>self)['NLSLoaderPlugin'] = undefined;
  (<any>self)['define'] = undefined;
 diff --git a/src/vs/workbench/contrib/webview/browser/pre/index.html b/src/vs/workbench/contrib/webview/browser/pre/index.html
-index 8e3d08e..1185d47 100644
+index 9eefb7f..f70f7a2 100644
 --- a/src/vs/workbench/contrib/webview/browser/pre/index.html
 +++ b/src/vs/workbench/contrib/webview/browser/pre/index.html
 @@ -4,9 +4,6 @@
@@ -62,7 +62,7 @@ index 8e3d08e..1185d47 100644
  	<meta charset="UTF-8">
  
 -	<meta http-equiv="Content-Security-Policy"
--		content="default-src 'none'; script-src 'sha256-N4YFn5ze5crjPqMK/opogKs7bSGWtf3lmjV/3LfbSOs=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
+-		content="default-src 'none'; script-src 'sha256-7Y08cqii1UgeZbSST9r8UPSownOSMa3/PiKe77avh7I=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
 -
  	<!-- Disable pinch zooming -->
  	<meta name="viewport"
@@ -91,8 +91,23 @@ index 8e3d08e..1185d47 100644
  			}
  		}();
  
+diff --git a/src/vs/workbench/services/environment/browser/environmentService.ts b/src/vs/workbench/services/environment/browser/environmentService.ts
+index 4a8a93f..80bdfb0 100644
+--- a/src/vs/workbench/services/environment/browser/environmentService.ts
++++ b/src/vs/workbench/services/environment/browser/environmentService.ts
+@@ -225,8 +225,9 @@ export class BrowserWorkbenchEnvironmentService implements IBrowserWorkbenchEnvi
+ 
+ 	@memoize
+ 	get webviewExternalEndpoint(): string {
++		const origin = globalThis.location?.origin;
+ 		const endpoint = this.options.webviewEndpoint
+-			|| this.productService.webviewContentExternalBaseUrlTemplate
++			|| (this.productService.webviewContentExternalBaseUrlTemplate ? `${origin}/${this.productService.webviewContentExternalBaseUrlTemplate}` : false)
+ 			|| 'https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}/out/vs/workbench/contrib/webview/browser/pre/';
+ 
+ 		const webviewExternalEndpointCommit = this.payload?.get('webviewExternalEndpointCommit');
 diff --git a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
-index 576bad1..0f29ae7 100644
+index 576bad1..6f6f799 100644
 --- a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 +++ b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 @@ -1,12 +1,5 @@
@@ -108,10 +123,41 @@ index 576bad1..0f29ae7 100644
  	<body>
  	<script>
  (function() {
-@@ -17,11 +10,24 @@
+@@ -17,40 +10,24 @@
  	const salt = searchParams.get('salt');
  
  	(async function() {
+-		const hostnameValidationMarker = 'v--';
+-		const hostname = location.hostname;
+-		if (!hostname.startsWith(hostnameValidationMarker)) {
+-			// validation not requested
+-			return start();
+-		}
+-		if (!crypto.subtle) {
+-			// cannot validate, not running in a secure context
+-			return sendError(new Error(`Cannot validate in current context!`));
+-		}
+-
+-		// Here the `parentOriginHash()` function from `src/vs/workbench/common/webview.ts` is inlined
+-		// compute a sha-256 composed of `parentOrigin` and `salt` converted to base 32
+-		let parentOriginHash;
+-		try {
+-			const strData = JSON.stringify({ parentOrigin, salt });
+-			const encoder = new TextEncoder();
+-			const arrData = encoder.encode(strData);
+-			const hash = await crypto.subtle.digest('sha-256', arrData);
+-			const hashArray = Array.from(new Uint8Array(hash));
+-			const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+-			// sha256 has 256 bits, so we need at most ceil(lg(2^256-1)/lg(32)) = 52 chars to represent it in base 32
+-			parentOriginHash = BigInt(`0x${hashHex}`).toString(32).padStart(52, '0');
+-		} catch(err) {
+-			return sendError(err instanceof Error ? err : new Error(String(err)));
+-		}
+-
+-		const requiredSubdomain = `${hostnameValidationMarker}${parentOriginHash}.`;
+-		if (hostname.substring(0, requiredSubdomain.length) === requiredSubdomain) {
+-			// validation succeeded!
+-			return start();
 +		const memoryReceiveTimeout = 500; // ms
 +		const memory = await new Promise((resolve, reject) => {
 +			const timer = setTimeout(() => {
@@ -125,25 +171,16 @@ index 576bad1..0f29ae7 100644
 +				}
 +			});
 +		}).catch(() => { /* no memory, ignore */ })
- 		const hostnameValidationMarker = 'v--';
- 		const hostname = location.hostname;
- 		if (!hostname.startsWith(hostnameValidationMarker)) {
- 			// validation not requested
--			return start();
-+			return start(memory);
- 		}
- 		if (!crypto.subtle) {
- 			// cannot validate, not running in a secure context
-@@ -47,7 +53,7 @@
- 		const requiredSubdomain = `${hostnameValidationMarker}${parentOriginHash}.`;
- 		if (hostname.substring(0, requiredSubdomain.length) === requiredSubdomain) {
- 			// validation succeeded!
--			return start();
-+			return start(memory);
++		if (!memory) {
++			return sendError(new Error(`no memory!`));
  		}
  
- 		return sendError(new Error(`Expected '${requiredSubdomain}' as subdomain!`));
-@@ -64,7 +70,7 @@
+-		return sendError(new Error(`Expected '${requiredSubdomain}' as subdomain!`));
++		return start(memory);
+ 	})();
+ 
+ 	function sendError(error) {
+@@ -64,7 +41,7 @@
  		}, '*');
  	}
  
@@ -152,7 +189,7 @@ index 576bad1..0f29ae7 100644
  		try {
  			let workerUrl = '../../../../base/worker/workerMain.js';
  			if(globalThis.crossOriginIsolated) {
-@@ -78,7 +84,10 @@
+@@ -78,7 +55,10 @@
  			worker.onmessage = (event) => {
  				const { data } = event;
  

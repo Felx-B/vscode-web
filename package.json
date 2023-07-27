@@ -1,6 +1,6 @@
 {
   "name": "@zorse/vscode-web",
-  "version": "1.79.0-patch.7",
+  "version": "1.80.2-patch.8",
   "description": "Visual Studio Code for browser",
   "files": [
     "dist"
