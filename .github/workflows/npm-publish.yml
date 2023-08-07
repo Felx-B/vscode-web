@@ -16,8 +16,10 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - name: Install libkrb5-dev
-        run: sudo apt-get install -y libkrb5-dev
+      - name: Setup Build Environment
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y libxkbfile-dev pkg-config libsecret-1-dev libkrb5-dev libxss1 dbus libgtk-3-0 libgbm1
       - name: install
         run: yarn
       - name: build
