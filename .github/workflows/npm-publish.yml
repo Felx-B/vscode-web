@@ -19,7 +19,7 @@ jobs:
       - name: Setup Build Environment
         run: |
             sudo apt-get update
-            sudo apt-get install -y libxkbfile-dev pkg-config libsecret-1-dev libkrb5-dev libxss1 dbus libgtk-3-0 libgbm1
+            sudo apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev python-is-python3
       - name: install
         run: yarn
       - name: build
