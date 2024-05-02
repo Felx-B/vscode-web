@@ -14,6 +14,8 @@ jobs:
         with:
           node-version: 18
           registry-url: https://registry.npmjs.org/
+      - name: clean-gyp
+        run: rm -rf ~/.node-gyp ~/.cache/node-gyp
       - name: build
         run: yarn build
       - name: publish
