@@ -1,8 +1,8 @@
 diff --git a/src/vs/workbench/api/browser/viewsExtensionPoint.ts b/src/vs/workbench/api/browser/viewsExtensionPoint.ts
-index 5fc7d5d..729ed0b 100644
+index fe77f83..a63a4a0 100644
 --- a/src/vs/workbench/api/browser/viewsExtensionPoint.ts
 +++ b/src/vs/workbench/api/browser/viewsExtensionPoint.ts
-@@ -72,6 +72,11 @@ export const viewsContainersContribution: IJSONSchema = {
+@@ -73,6 +73,11 @@ export const viewsContainersContribution: IJSONSchema = {
  			type: 'array',
  			items: viewsContainerSchema
  		},
@@ -14,7 +14,7 @@ index 5fc7d5d..729ed0b 100644
  		'panel': {
  			description: localize('views.container.panel', "Contribute views containers to Panel"),
  			type: 'array',
-@@ -339,6 +344,7 @@ class ViewsExtensionHandler implements IWorkbenchContribution {
+@@ -346,6 +351,7 @@ class ViewsExtensionHandler implements IWorkbenchContribution {
  		const viewContainersRegistry = Registry.as<IViewContainersRegistry>(ViewContainerExtensions.ViewContainersRegistry);
  		let activityBarOrder = CUSTOM_VIEWS_START_ORDER + viewContainersRegistry.all.filter(v => !!v.extensionId && viewContainersRegistry.getViewContainerLocation(v) === ViewContainerLocation.Sidebar).length;
  		let panelOrder = 5 + viewContainersRegistry.all.filter(v => !!v.extensionId && viewContainersRegistry.getViewContainerLocation(v) === ViewContainerLocation.Panel).length + 1;
@@ -22,7 +22,7 @@ index 5fc7d5d..729ed0b 100644
  		for (const { value, collector, description } of extensionPoints) {
  			Object.entries(value).forEach(([key, value]) => {
  				if (!this.isValidViewsContainer(value, collector)) {
-@@ -351,6 +357,8 @@ class ViewsExtensionHandler implements IWorkbenchContribution {
+@@ -358,6 +364,8 @@ class ViewsExtensionHandler implements IWorkbenchContribution {
  					case 'panel':
  						panelOrder = this.registerCustomViewContainers(value, description, panelOrder, existingViewContainers, ViewContainerLocation.Panel);
  						break;
@@ -32,7 +32,7 @@ index 5fc7d5d..729ed0b 100644
  			});
  		}
 diff --git a/src/vs/workbench/api/worker/extensionHostWorker.ts b/src/vs/workbench/api/worker/extensionHostWorker.ts
-index 998b53a..33d7480 100644
+index 86136a0..189be05 100644
 --- a/src/vs/workbench/api/worker/extensionHostWorker.ts
 +++ b/src/vs/workbench/api/worker/extensionHostWorker.ts
 @@ -41,7 +41,6 @@ const nativeClose = self.close.bind(self);
@@ -54,20 +54,19 @@ index 998b53a..33d7480 100644
  (<any>self)['NLSLoaderPlugin'] = undefined;
  (<any>self)['define'] = undefined;
 diff --git a/src/vs/workbench/contrib/webview/browser/pre/index.html b/src/vs/workbench/contrib/webview/browser/pre/index.html
-index 9eefb7f..f70f7a2 100644
+index fa7b15e..44797f4 100644
 --- a/src/vs/workbench/contrib/webview/browser/pre/index.html
 +++ b/src/vs/workbench/contrib/webview/browser/pre/index.html
-@@ -4,9 +4,6 @@
+@@ -4,8 +4,6 @@
  <head>
  	<meta charset="UTF-8">
  
 -	<meta http-equiv="Content-Security-Policy"
--		content="default-src 'none'; script-src 'sha256-7Y08cqii1UgeZbSST9r8UPSownOSMa3/PiKe77avh7I=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
--
+-		content="default-src 'none'; script-src 'sha256-bQPwjO6bLiyf6v9eDVtAI67LrfonA1w49aFkRXBy4/g=' 'self'; frame-src 'self'; style-src 'unsafe-inline';">
+ 
  	<!-- Disable pinch zooming -->
  	<meta name="viewport"
- 		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-@@ -205,9 +202,6 @@
+@@ -215,9 +213,6 @@
  							});
  						};
  					})();
@@ -77,7 +76,7 @@ index 9eefb7f..f70f7a2 100644
  				`;
  		}
  
-@@ -355,12 +349,7 @@
+@@ -365,12 +360,8 @@
  					throw err instanceof Error ? err : new Error(String(err));
  				}
  
@@ -85,7 +84,7 @@ index 9eefb7f..f70f7a2 100644
 -					// validation succeeded!
 -					return start(parentOrigin);
 -				}
--
+ 
 -				throw new Error(`Expected '${parentOriginHash}' as hostname or subdomain!`);
 +				return start(parentOrigin);
  			}
@@ -107,7 +106,7 @@ index 4a8a93f..80bdfb0 100644
  
  		const webviewExternalEndpointCommit = this.payload?.get('webviewExternalEndpointCommit');
 diff --git a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
-index 576bad1..6f6f799 100644
+index 6a16dd1..6a02c4c 100644
 --- a/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 +++ b/src/vs/workbench/services/extensions/worker/webWorkerExtensionHostIframe.html
 @@ -1,12 +1,5 @@
@@ -117,16 +116,16 @@ index 576bad1..6f6f799 100644
 -		<meta http-equiv="Content-Security-Policy" content="
 -			default-src 'none';
 -			child-src 'self' data: blob:;
--			script-src 'self' 'unsafe-eval' 'sha256-/r7rqQ+yrxt57sxLuQ6AMYcy/lUpvAIzHjIJt/OeLWU=' https:;
+-			script-src 'self' 'unsafe-eval' 'sha256-75NYUUvf+5++1WbfCZOV3PSWxBhONpaxwx+mkOFRv/Y=' https:;
 -			connect-src 'self' https: wss: http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*;"/>
 -	</head>
  	<body>
  	<script>
- (function() {
-@@ -17,40 +10,24 @@
+ (function () {
+@@ -17,41 +10,24 @@
  	const salt = searchParams.get('salt');
  
- 	(async function() {
+ 	(async function () {
 -		const hostnameValidationMarker = 'v--';
 -		const hostname = location.hostname;
 -		if (!hostname.startsWith(hostnameValidationMarker)) {
@@ -138,8 +137,9 @@ index 576bad1..6f6f799 100644
 -			return sendError(new Error(`Cannot validate in current context!`));
 -		}
 -
--		// Here the `parentOriginHash()` function from `src/vs/workbench/common/webview.ts` is inlined
+-		// Here the `parentOriginHash()` function from `src/vs/base/browser/iframe.ts` is inlined
 -		// compute a sha-256 composed of `parentOrigin` and `salt` converted to base 32
+-		/** @type {string} */
 -		let parentOriginHash;
 -		try {
 -			const strData = JSON.stringify({ parentOrigin, salt });
@@ -150,7 +150,7 @@ index 576bad1..6f6f799 100644
 -			const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 -			// sha256 has 256 bits, so we need at most ceil(lg(2^256-1)/lg(32)) = 52 chars to represent it in base 32
 -			parentOriginHash = BigInt(`0x${hashHex}`).toString(32).padStart(52, '0');
--		} catch(err) {
+-		} catch (err) {
 -			return sendError(err instanceof Error ? err : new Error(String(err)));
 -		}
 -
@@ -180,7 +180,7 @@ index 576bad1..6f6f799 100644
  	})();
  
  	function sendError(error) {
-@@ -64,7 +41,7 @@
+@@ -65,7 +41,7 @@
  		}, '*');
  	}
  
@@ -188,8 +188,8 @@ index 576bad1..6f6f799 100644
 +	function start(memory) {
  		try {
  			let workerUrl = '../../../../base/worker/workerMain.js';
- 			if(globalThis.crossOriginIsolated) {
-@@ -78,7 +55,10 @@
+ 			if (globalThis.crossOriginIsolated) {
+@@ -79,7 +55,10 @@
  			worker.onmessage = (event) => {
  				const { data } = event;
  
