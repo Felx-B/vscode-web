@@ -34,8 +34,8 @@ ok("required tools installed")
 
 const node_version_out = child_process.execSync(`node -v`);
 const node_version = node_version_out.toString().trim()
-if (node_version < "v18.15" || node_version >= "v19.0") {
-  error(`Want node > 18.15 and < 19. Got "${node_version}"`);
+if (node_version < "v20.0") {
+  error(`Want node > 20. Got "${node_version}"`);
   process.exit(1);
 }
 
