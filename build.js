@@ -44,7 +44,6 @@ if (!fs.existsSync("vscode")) {
   exec(`git clone --depth 1 https://github.com/microsoft/vscode.git -b ${VSCODE_VERSION}`, {
     stdio: "inherit",
   });
-  exec("cd vscode && git apply ../vscode.patch", { stdio: "inherit" });
 } else {
   ok("vscodium already installed")
   note("delete vscodium folder to clone again")
