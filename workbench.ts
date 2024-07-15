@@ -2,8 +2,7 @@ import {
   create
 } from "vs/workbench/workbench.web.main";
 import { URI, UriComponents } from "vs/base/common/uri";
-import { IWorkbenchConstructionOptions } from "vs/workbench/browser/web.api";
-import { IWorkspace, IWorkspaceProvider } from "vs/workbench/services/host/browser/browserHostService";
+import { IWorkbenchConstructionOptions, IWorkspace, IWorkspaceProvider } from "vs/workbench/browser/web.api";
 declare const window: any;
 
 (async function () {
@@ -17,7 +16,7 @@ declare const window: any;
   if (window.product) {
     config = window.product;
   } else {
-    const result = await fetch("/product.json");
+    const result = await fetch("product.json");
     config = await result.json();
   }
 
