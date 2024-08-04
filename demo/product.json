@@ -19,7 +19,8 @@
 	"additionalBuiltinExtensions": [
 		{
 			"scheme": "http",
-			"path": "/static/extensions/vscode-web-playground"
+			"authority": "localhost:8080",
+			"path": "static/extensions/vscode-web-playground"
 		}
 	]
 }
