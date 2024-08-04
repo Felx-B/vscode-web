@@ -1,8 +1,10 @@
 {
   "name": "vscode-web",
-  "version": "1.91.1",
+  "version": "1.92.0",
   "description": "Visual Studio Code for browser",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "node build.js",
     "prepare-demo": "node prepare-demo.js",
@@ -22,5 +24,6 @@
     "express": "^4.17.1",
     "fs-extra": "^9.0.1"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
 }
