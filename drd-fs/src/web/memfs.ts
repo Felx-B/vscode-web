@@ -7,12 +7,12 @@ import {
   Disposable,
   EventEmitter,
   FileChangeEvent,
+  FileChangeType,
   FileStat,
   FileSystemError,
   FileSystemProvider,
   FileType,
   Uri,
-  workspace,
 } from "vscode";
 
 import { XMLParser } from "fast-xml-parser";
@@ -65,22 +65,40 @@ export type Entry = File | Directory;
 export class MemFS implements FileSystemProvider, Disposable {
   static scheme = "memfs";
   private wedavUrl: string;
+  private _isInitialized = false;
+  private _emitter = new EventEmitter<FileChangeEvent[]>();
+  private readonly disposables: Disposable[] = [];
 
-  private readonly disposable: Disposable;
+  get webdavUrl(): string {
+    return this.wedavUrl;
+  }
+
+  set webdavUrl(value: string) {
+    this.wedavUrl = value.replace(/\/$/, "");
+  }
 
   constructor(wedavUrl: string, private webdavOptions?: WebDavOptions) {
     //set the webdav url but strip the trailing slash, if any
     this.wedavUrl = wedavUrl.replace(/\/$/, "");
+    this.disposables.push(this._emitter);
 
-    this.disposable = Disposable.from(
-      workspace.registerFileSystemProvider(MemFS.scheme, this, {
-        isCaseSensitive: true,
-      })
+    // Mark as initialized if we have both URL and credentials
+    this._isInitialized = !!(
+      wedavUrl &&
+      (webdavOptions?.basicAuthApikey || webdavOptions?.accessToken)
     );
   }
 
   dispose() {
-    this.disposable?.dispose();
+    this.disposables.forEach((d) => d.dispose());
+  }
+
+  private ensureInitialized(): void {
+    if (!this._isInitialized) {
+      throw FileSystemError.Unavailable(
+        "File system not yet initialized. Please configure credentials first."
+      );
+    }
   }
 
   private getAuthHeader() {
@@ -184,6 +202,7 @@ export class MemFS implements FileSystemProvider, Disposable {
   root = new Directory(Uri.parse("memfs:/"), "");
 
   async stat(uri: Uri): Promise<FileStat> {
+    this.ensureInitialized();
     const data = await this.readDavDirectory(uri.path);
 
     if (data[0]) {
@@ -198,6 +217,7 @@ export class MemFS implements FileSystemProvider, Disposable {
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
+    this.ensureInitialized();
     const list = await this.readDavDirectory(uri.path);
 
     const { prefix = "" } = this.webdavOptions || {};
@@ -224,6 +244,7 @@ export class MemFS implements FileSystemProvider, Disposable {
   // --- manage file contents
 
   async readFile(uri: Uri): Promise<Uint8Array> {
+    this.ensureInitialized();
     const res = await this.davRequest(uri.path, {
       method: "GET",
       body: undefined,
@@ -238,6 +259,7 @@ export class MemFS implements FileSystemProvider, Disposable {
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
   ) {
+    this.ensureInitialized();
     await this.davRequest(uri.path, {
       method: "PUT",
       body: content as any,
@@ -247,6 +269,7 @@ export class MemFS implements FileSystemProvider, Disposable {
   // --- manage files/folders
 
   async rename(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }) {
+    this.ensureInitialized();
     const { prefix = "" } = this.webdavOptions || {};
 
     await this.davRequest(oldUri.path, {
@@ -258,12 +281,14 @@ export class MemFS implements FileSystemProvider, Disposable {
   }
 
   async delete(uri: Uri) {
+    this.ensureInitialized();
     await this.davRequest(uri.path, {
       method: "DELETE",
     });
   }
 
   async createDirectory(uri: Uri) {
+    this.ensureInitialized();
     await this.davRequest(uri.path, {
       method: "MKCOL",
     });
@@ -271,10 +296,24 @@ export class MemFS implements FileSystemProvider, Disposable {
 
   async updateCredentials(options: WebDavOptions) {
     this.webdavOptions = options;
+    this._isInitialized = !!(
+      this.wedavUrl &&
+      (options.basicAuthApikey || options.accessToken)
+    );
+
+    if (this._isInitialized) {
+      // Fire change events to refresh any open files
+      this._emitter.fire([
+        {
+          type: FileChangeType.Changed,
+          uri: Uri.parse("memfs:/"),
+        },
+      ]);
+    }
   }
 
-  onDidChangeFile() {
-    return new EventEmitter<FileChangeEvent[]>();
+  get onDidChangeFile() {
+    return this._emitter.event;
   }
 
   watch(
